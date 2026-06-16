@@ -27,7 +27,7 @@ const routes = [
   {
     path: '/carrinho',
     name: 'Cart',
-    component: HomeView,
+    component: CartPanel,
   }
 ];
 
