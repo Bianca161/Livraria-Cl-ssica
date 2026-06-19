@@ -16,7 +16,6 @@ const handleAddToCartInApp = (product) => {
     existingItem.quantidade++
     addedBookTitle.value = `"${product.title}" já está no carrinho! `
   } else {
-    
     mockCart.value.push({ ...product, quantidade: 1 })
 
     addedBookTitle.value = `"${product.title}" `
@@ -60,13 +59,56 @@ const navigation = [
       </div>
     </Transition>
 
-    <div class="floating-navigation">
-      <button :class="{ active: currentScreen === 'carrinho' }" @click="currentScreen = 'carrinho'">
-        Carrinho ({{ mockCart.length }})
-      </button>
-    </div>
+    <header class="app-header">
+      <div class="header-container">
+        <div class="logo-section">
+          <img src="/logo.png" alt="Livraria Classica Logo" class="logo" />
+        </div>
+
+        <div class="search-section">
+          <div class="search-wrapper">
+            <input
+              v-model="searchQuery"
+              type="text"
+              placeholder="Pesquisar"
+              class="search-input"
+              @keyup.enter="handleSearch"
+            />
+            <button @click="handleSearch" class="search-button" title="Lupa">
+              <i class="mdi mdi-magnify"></i>
+            </button>
+          </div>
+        </div>
+
+        <nav class="nav-section">
+          <ul class="nav-menu">
+            <li v-for="item in navigation" :key="item.label">
+              <a :href="item.href" class="nav-link">{{ item.label }}</a>
+            </li>
+          </ul>
+
+          <div class="icons-group">
+            <div class="icon-separator"></div>
+            <button class="icon-button" title="Favoritos"><i class="mdi mdi-star"></i></button>
+            <button class="icon-button" title="Carrinho">
+              <i class="mdi mdi-cart-outline"></i>
+            </button>
+            <button class="icon-button" title="Login"><i class="mdi mdi-account"></i></button>
+          </div>
+        </nav>
+      </div>
+    </header>
 
     <main class="main-content">
+      <div class="floating-navigation">
+        <button
+          :class="{ active: currentScreen === 'carrinho' }"
+          @click="currentScreen = 'carrinho'"
+        >
+          Carrinho ({{ mockCart.length }})
+        </button>
+      </div>
+
       <ProductList v-if="currentScreen === 'vitrine'" @add-to-cart="handleAddToCartInApp" />
 
       <div v-else-if="currentScreen === 'carrinho'">
@@ -88,43 +130,6 @@ const navigation = [
     </main>
   </div>
 
-  <header class="app-header">
-    <div class="header-container">
-      <div class="logo-section">
-        <img src="/logo.png" alt="Livraria Classica Logo" class="logo"/>
-      </div>
-
-      <div class="search-section">
-        <div class="search-wrapper">
-          <input
-            v-model="searchQuery"
-            type="text"
-            placeholder="Pesquisar"
-            class="search-input"
-            @keyup.enter="handleSearch"
-          />
-          <button @click="handleSearch" class="search-button" title="Lupa">
-            <i class="mdi mdi-magnify"></i>
-          </button>
-        </div>
-      </div>
-
-      <nav class="nav-section">
-        <ul class="nav-menu">
-          <li v-for="item in navigation" :key="item.label">
-            <a :href="item.href" class="nav-link">{{ item.label }}</a>
-          </li>
-        </ul>
-
-        <div class="icons-group">
-          <div class="icon-separator"></div>
-          <button class="icon-button" title="Favoritos"><i class="mdi mdi-star"></i></button>
-          <button class="icon-button" title="Carrinho"><i class="mdi mdi-cart-outline"></i></button>
-          <button class="icon-button" title="Login"><i class="mdi mdi-account"></i></button>
-        </div>
-      </nav>
-    </div>
-  </header>
   <RouterView />
   <AppFooter />
 </template>
