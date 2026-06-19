@@ -1,7 +1,43 @@
 <script setup>
 import { ref } from 'vue'
 import AppFooter from './components/layout/AppFooter.vue'
+const currentScreen = ref('vitrine')
+const mockCart = ref([])
+const addedBookTitle = ref(null)
 
+const calculateTotal = computed(() => {
+  return mockCart.value.reduce((acc, item) => acc + item.preco * item.quantidade, 0)
+})
+
+const handleAddToCartInApp = (product) => {
+  const existingItem = mockCart.value.find((item) => item.id === product.id)
+
+  if (existingItem) {
+    existingItem.quantidade++
+    addedBookTitle.value = `"${product.title}" já está no carrinho! `
+  } else {
+    
+    mockCart.value.push({ ...product, quantidade: 1 })
+
+    addedBookTitle.value = `"${product.title}" `
+  }
+
+  setTimeout(() => {
+    addedBookTitle.value = null
+  }, 1000)
+}
+
+const addQuantity = (item) => {
+  item.quantidade++
+}
+
+const removeQuantity = (item) => {
+  if (item.quantidade > 1) {
+    item.quantidade--
+  } else {
+    mockCart.value = mockCart.value.filter((cartItem) => cartItem.id !== item.id)
+  }
+}
 const searchQuery = ref('')
 
 const handleSearch = () => {
@@ -17,6 +53,38 @@ const navigation = [
 </script>
 
 <template>
+  <div id="app-container">
+    <Transition name="fade">
+      <div v-if="addedBookTitle" class="toast-notification">
+        <strong>"{{ addedBookTitle }}"</strong> foi adicionado com sucesso ao carrinho!
+      </div>
+    </Transition>
+
+    <div class="floating-navigation">
+      <button :class="{ active: currentScreen === 'carrinho' }" @click="currentScreen = 'carrinho'">
+        Carrinho ({{ mockCart.length }})
+      </button>
+    </div>
+
+    <main class="main-content">
+      <ProductList v-if="currentScreen === 'vitrine'" @add-to-cart="handleAddToCartInApp" />
+
+      <div v-else-if="currentScreen === 'carrinho'">
+        <div v-if="mockCart.length === 0" class="empty-cart-message">
+          <h2>Seu carrinho está vazio</h2>
+          <p>Você não possui livros no seu carrinho no momento.</p>
+          <button @click="currentScreen = 'vitrine'" class="btn-continue">Escolher Livros</button>
+        </div>
+
+        <CartPanel
+          v-else
+          :cartItems="mockCart"
+          :cartTotal="calculateTotal"
+          @increase-qty="addQuantity"
+          @decrease-qty="removeQuantity"
+          @go-to-store="currentScreen = 'vitrine'"
+        />
+
   <header class="app-header">
     <div class="header-container">
       <div class="logo-section">
