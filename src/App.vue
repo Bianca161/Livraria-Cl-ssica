@@ -1,5 +1,5 @@
 <script setup>
-import { ref } from 'vue'
+import { ref, computed } from 'vue'
 import AppFooter from './components/layout/AppFooter.vue'
 const currentScreen = ref('vitrine')
 const mockCart = ref([])
@@ -84,6 +84,9 @@ const navigation = [
           @decrease-qty="removeQuantity"
           @go-to-store="currentScreen = 'vitrine'"
         />
+      </div>
+    </main>
+  </div>
 
   <header class="app-header">
     <div class="header-container">
